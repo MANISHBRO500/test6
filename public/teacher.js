@@ -27,6 +27,8 @@ document.getElementById('questionForm').addEventListener('submit', async (e) => 
       '<input type="text" class="option" placeholder="Option 1" required><br>';
     optionCount = 1;
     loadQuestions(); // Refresh list
+  } else {
+    alert('Failed to add question.');
   }
 });
 
