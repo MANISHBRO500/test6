@@ -75,6 +75,5 @@ app.delete('https://test6-xhu7.onrender.com/delete-question/:id', async (req, re
   }
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-
