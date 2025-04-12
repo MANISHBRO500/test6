@@ -1,16 +1,17 @@
 async function loadQuestions() {
   try {
+    // Fetch questions from the backend API
     const res = await fetch('https://student-teacher-api.onrender.com/questions');
-    
-    // Check if the response is okay (status code 200)
     if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
+      throw new Error('Network response was not ok');
     }
-
     const questions = await res.json();
-    const quizForm = document.getElementById('quizForm');
-    quizForm.innerHTML = ''; // Clear the quiz form before adding new questions
 
+    // Get the quiz form element and clear it before adding new questions
+    const quizForm = document.getElementById('quizForm');
+    quizForm.innerHTML = ''; 
+
+    // Loop through each question and create HTML elements
     questions.forEach((q, index) => {
       const div = document.createElement('div');
       div.classList.add('question-box');
@@ -23,12 +24,12 @@ async function loadQuestions() {
           </label><br>`;
       });
 
+      // Append the question box to the form
       quizForm.appendChild(div);
       quizForm.appendChild(document.createElement('br'));
     });
   } catch (error) {
-    console.error('Error loading questions:', error);
-    alert('Failed to load questions. Please try again later.');
+    console.error('Error fetching questions:', error);
   }
 }
 
@@ -37,6 +38,8 @@ async function submitAnswers() {
   if (!studentName) return alert('Please enter your name');
 
   const responses = [];
+  
+  // Collect all selected answers
   document.querySelectorAll('form input[type=radio]:checked').forEach(input => {
     responses.push({
       questionId: input.name,
@@ -45,19 +48,20 @@ async function submitAnswers() {
   });
 
   try {
+    // Submit the answers to the backend API
     const res = await fetch('https://student-teacher-api.onrender.com/submit-answers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentName, responses })
     });
 
-    // Check if the response is okay (status code 200)
     if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
+      throw new Error('Network response was not ok');
     }
 
     const result = await res.json();
 
+    // Create HTML content for the result
     let resultHtml = `<h3>You scored ${result.score} out of ${result.total}</h3><hr>`;
 
     result.responses.forEach((response, index) => {
@@ -69,11 +73,12 @@ async function submitAnswers() {
         <p><strong>Question ${index + 1}:</strong> ${answerFeedback}</p>`;
     });
 
+    // Display the result
     document.getElementById('result').innerHTML = resultHtml;
   } catch (error) {
     console.error('Error submitting answers:', error);
-    alert('Failed to submit answers. Please try again later.');
   }
 }
 
+// Load questions when the page is loaded
 window.onload = loadQuestions;
