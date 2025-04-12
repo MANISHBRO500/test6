@@ -1,5 +1,5 @@
 async function loadQuestions() {
-  const res = await fetch('/questions');
+  const res = await fetch('https://test6-xhu7.onrender.com/questions');
   const questions = await res.json();
   const quizForm = document.getElementById('quizForm');
   quizForm.innerHTML = ''; // Clear the quiz form before adding new questions
@@ -29,7 +29,7 @@ async function submitAnswers() {
     });
   });
 
-  const res = await fetch('/submit-answers', {
+  const res = await fetch('https://test6-xhu7.onrender.com/submit-answers', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentName, responses })
