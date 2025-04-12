@@ -8,7 +8,15 @@ const Question = require('./models/Question');
 const Answer = require('./models/Answer');
 
 const app = express();
-app.use(cors());
+
+// Enable CORS with specific options
+const corsOptions = {
+  origin: 'https://manishbro500.github.io', // Allow only this origin
+  methods: ['GET', 'POST', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+};
+app.use(cors(corsOptions)); // Enable CORS with options
+
 app.use(express.json());
 app.use(express.static('public'));
 
