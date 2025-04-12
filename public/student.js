@@ -1,15 +1,19 @@
 async function loadQuestions() {
-  const res = await fetch('https://test6-xhu7.onrender.com/questions');
+  const res = await fetch('https://student-teacher-api.onrender.com/questions');
   const questions = await res.json();
   const quizForm = document.getElementById('quizForm');
   quizForm.innerHTML = ''; // Clear the quiz form before adding new questions
 
   questions.forEach((q, index) => {
     const div = document.createElement('div');
+    div.classList.add('question-box');
     div.innerHTML = `<strong>Q${index + 1}: ${q.question}</strong><br>`;
-    
+
     q.options.forEach(opt => {
-      div.innerHTML += `<label><input type="radio" name="${q._id}" value="${opt}"> ${opt}</label><br>`;
+      div.innerHTML += `
+        <label>
+          <input type="radio" name="${q._id}" value="${opt}"> ${opt}
+        </label><br>`;
     });
 
     quizForm.appendChild(div);
@@ -29,32 +33,25 @@ async function submitAnswers() {
     });
   });
 
-  const res = await fetch('https://test6-xhu7.onrender.com/submit-answers', {
+  const res = await fetch('https://student-teacher-api.onrender.com/submit-answers', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentName, responses })
   });
 
   const result = await res.json();
-  
-  // Display the result score
-  let resultHtml = `<h3>You scored ${result.score} out of ${result.total}</h3>`;
 
-  // Display feedback for each question
+  let resultHtml = `<h3>You scored ${result.score} out of ${result.total}</h3><hr>`;
+
   result.responses.forEach((response, index) => {
-    const questionDiv = document.createElement('div');
-    
-    // Display the question number and answer feedback
-    const answerFeedback = response.isCorrect 
-      ? `Correct answer!`
-      : `Incorrect. The correct answer is: "${response.correctAnswer}"`;
+    const answerFeedback = response.isCorrect
+      ? `<span style="color: green;">✅ Correct!</span>`
+      : `<span style="color: red;">❌ Incorrect. Correct answer: <strong>${response.correctAnswer}</strong></span>`;
 
-    questionDiv.innerHTML = `<p><strong>Question ${index + 1}:</strong> ${answerFeedback}</p>`;
-    
-    resultHtml += questionDiv.outerHTML;
+    resultHtml += `
+      <p><strong>Question ${index + 1}:</strong> ${answerFeedback}</p>`;
   });
 
-  // Show the results in the result div
   document.getElementById('result').innerHTML = resultHtml;
 }
 
