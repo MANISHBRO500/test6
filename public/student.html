@@ -130,7 +130,7 @@
   <div id="result"></div>
 
   <script>
-    // Function to fetch quiz questions when the page loads
+    // Fetch questions on page load
     document.addEventListener("DOMContentLoaded", function() {
       fetchQuestions();
     });
@@ -149,6 +149,7 @@
       }
     }
 
+    // ✅ Fixed: Use _id as the name so we can submit correct questionId
     function displayQuestions(questions) {
       const quizForm = document.getElementById('quizForm');
       quizForm.innerHTML = '';  // Clear any existing questions
@@ -157,13 +158,12 @@
         const questionBox = document.createElement('div');
         questionBox.classList.add('question-box');
 
-        // Display question and options dynamically
         questionBox.innerHTML = `<strong>Q${index + 1}: ${question.question}</strong><br>`;
 
         question.options.forEach(option => {
           questionBox.innerHTML += `
             <label>
-              <input type="radio" name="q${index}" value="${option}"> ${option}
+              <input type="radio" name="${question._id}" value="${option}"> ${option}
             </label><br>`;
         });
 
@@ -171,7 +171,6 @@
       });
     }
 
-    // Function to submit the student's answers
     async function submitAnswers() {
       const studentName = document.getElementById('studentName').value;
       if (!studentName) {
@@ -199,7 +198,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ studentName, responses })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to submit answers');
         }
@@ -212,7 +211,6 @@
       }
     }
 
-    // Function to display the result after submitting answers
     function displayResults(result) {
       let resultHtml = `<h3>You scored ${result.score} out of ${result.total}</h3><hr>`;
 
@@ -220,7 +218,7 @@
         const feedback = response.isCorrect
           ? `<span style="color: green;">✅ Correct!</span>`
           : `<span style="color: red;">❌ Incorrect. Correct answer: <strong>${response.correctAnswer}</strong></span>`;
-        
+
         resultHtml += `<p><strong>Question ${index + 1}:</strong> ${feedback}</p>`;
       });
 
