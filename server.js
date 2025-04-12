@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 // Add a question (Teacher)
-app.post('/add-question', async (req, res) => {
+app.post('https://test6-xhu7.onrender.com/add-question', async (req, res) => {
   const { question, options, answer } = req.body;
   const q = new Question({ question, options, answer });
   await q.save();
@@ -27,13 +27,13 @@ app.post('/add-question', async (req, res) => {
 });
 
 // Get all questions (Student)
-app.get('/questions', async (req, res) => {
+app.get('https://test6-xhu7.onrender.com/questions', async (req, res) => {
   const questions = await Question.find();
   res.json(questions);
 });
 
 // Submit student answers
-app.post('/submit-answers', async (req, res) => {
+app.post('https://test6-xhu7.onrender.com/submit-answers', async (req, res) => {
   const { studentName, responses } = req.body;
 
   let score = 0;
@@ -66,7 +66,7 @@ app.post('/submit-answers', async (req, res) => {
 });
 
 // Delete a question by ID (Teacher)
-app.delete('/delete-question/:id', async (req, res) => {
+app.delete('https://test6-xhu7.onrender.com/delete-question/:id', async (req, res) => {
   try {
     await Question.findByIdAndDelete(req.params.id);
     res.send('Question deleted');
