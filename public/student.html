@@ -1,7 +1,9 @@
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Student Panel</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Panel - Quiz</title>
   <style>
     * {
       box-sizing: border-box;
@@ -126,6 +128,104 @@
   <form id="quizForm"></form>
   <button onclick="submitAnswers()">Submit Answers</button>
   <div id="result"></div>
-  <script src="student.js"></script>
+
+  <script>
+    // Function to fetch quiz questions when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+      fetchQuestions();
+    });
+
+    async function fetchQuestions() {
+      try {
+        const response = await fetch('https://test6-xhu7.onrender.com/questions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch questions');
+        }
+        const questions = await response.json();
+        displayQuestions(questions);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching questions');
+      }
+    }
+
+    function displayQuestions(questions) {
+      const quizForm = document.getElementById('quizForm');
+      quizForm.innerHTML = '';  // Clear any existing questions
+
+      questions.forEach((question, index) => {
+        const questionBox = document.createElement('div');
+        questionBox.classList.add('question-box');
+
+        // Display question and options dynamically
+        questionBox.innerHTML = `<strong>Q${index + 1}: ${question.question}</strong><br>`;
+
+        question.options.forEach(option => {
+          questionBox.innerHTML += `
+            <label>
+              <input type="radio" name="q${index}" value="${option}"> ${option}
+            </label><br>`;
+        });
+
+        quizForm.appendChild(questionBox);
+      });
+    }
+
+    // Function to submit the student's answers
+    async function submitAnswers() {
+      const studentName = document.getElementById('studentName').value;
+      if (!studentName) {
+        alert('Please enter your name');
+        return;
+      }
+
+      const responses = [];
+      const formElements = document.querySelectorAll('form input[type=radio]:checked');
+      formElements.forEach(input => {
+        responses.push({
+          questionId: input.name,
+          selectedOption: input.value
+        });
+      });
+
+      if (responses.length === 0) {
+        alert('Please answer at least one question');
+        return;
+      }
+
+      try {
+        const response = await fetch('https://test6-xhu7.onrender.com/submit-answers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentName, responses })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to submit answers');
+        }
+
+        const result = await response.json();
+        displayResults(result);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting answers');
+      }
+    }
+
+    // Function to display the result after submitting answers
+    function displayResults(result) {
+      let resultHtml = `<h3>You scored ${result.score} out of ${result.total}</h3><hr>`;
+
+      result.responses.forEach((response, index) => {
+        const feedback = response.isCorrect
+          ? `<span style="color: green;">✅ Correct!</span>`
+          : `<span style="color: red;">❌ Incorrect. Correct answer: <strong>${response.correctAnswer}</strong></span>`;
+        
+        resultHtml += `<p><strong>Question ${index + 1}:</strong> ${feedback}</p>`;
+      });
+
+      document.getElementById('result').innerHTML = resultHtml;
+    }
+  </script>
 </body>
 </html>
