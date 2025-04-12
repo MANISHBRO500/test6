@@ -14,7 +14,7 @@ document.getElementById('questionForm').addEventListener('submit', async (e) => 
   const options = Array.from(document.querySelectorAll('.option')).map(opt => opt.value);
   const answer = document.getElementById('answer').value;
 
-  const res = await fetch('/add-question', {
+  const res = await fetch('https://test6-xhu7.onrender.com/add-question', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question, options, answer }),
@@ -31,7 +31,7 @@ document.getElementById('questionForm').addEventListener('submit', async (e) => 
 });
 
 async function loadQuestions() {
-  const res = await fetch('/questions');
+  const res = await fetch('https://test6-xhu7.onrender.com/questions');
   const questions = await res.json();
   const container = document.getElementById('questionList');
   container.innerHTML = '';
@@ -52,7 +52,7 @@ async function loadQuestions() {
 
 async function deleteQuestion(id) {
   if (confirm('Are you sure you want to delete this question?')) {
-    const res = await fetch(`/delete-question/${id}`, {
+    const res = await fetch(`https://test6-xhu7.onrender.com/delete-question/${id}`, {
       method: 'DELETE',
     });
 
